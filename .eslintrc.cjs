@@ -14,5 +14,13 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
+    // 当代码出现Prettier校验出的格式化问题，ESLint会报错
+    // "prettier/prettier": "error"
   },
+  settings: {
+    "react": {
+      // 表示探测当前 node_modules 安装的 react 版本
+      version: "detect"
+    }
+  }
 }
