@@ -16,6 +16,7 @@ module.exports = {
     ],
     // 当代码出现Prettier校验出的格式化问题，ESLint会报错
     // "prettier/prettier": "error"
+    "@typescript-eslint/no-explicit-any": "off"
   },
   settings: {
     "react": {
