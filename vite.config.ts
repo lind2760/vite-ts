@@ -1,11 +1,12 @@
-import { ConfigEnv, UserConfigExport } from "vite";
+import {ConfigEnv, UserConfigExport} from "vite";
 import react from "@vitejs/plugin-react";
-// import visualizer from "rollup-plugin-visualizer";
+import visualizer from "rollup-plugin-visualizer";
 import path from "path";
 import fs from "fs";
 import dotenv from "dotenv";
-import { createHtmlPlugin } from "vite-plugin-html";
+import {createHtmlPlugin} from "vite-plugin-html";
 import vitePluginImp from "vite-plugin-imp";
+import eslintPlugin from "vite-plugin-eslint";
 
 // https://vitejs.dev/config/
 const config: UserConfigExport = {
@@ -24,9 +25,14 @@ const config: UserConfigExport = {
         },
       ],
     }),
+    eslintPlugin({
+      cache: false,
+      include: ["./src/**/*.js", "./src/**/*.jsx"],
+      exclude: [],
+    }),
   ],
   // 手动指定项目根目录位置
-  // root: path.join(__dirname, "index"),
+  // root: __dirname + "/index.html",
   resolve: {
     alias: [
       {
@@ -63,7 +69,6 @@ export default ({ command, mode }: ConfigEnv) => {
       plugins: [],
     },
   } = build;
-  console.log(rollupOptions);
   for (const file of envFiles) {
     try {
       fs.accessSync(file, fs.constants.F_OK);
@@ -95,33 +100,33 @@ export default ({ command, mode }: ConfigEnv) => {
       "process.env.NODE_ENV": '"production"',
     };
   }
-  //
-  // if (process.env.VISUALIZER) {
-  //   const { plugins = [] } = rollupOptions;
-  //   rollupOptions.plugins = [
-  //     ...plugins,
-  //     visualizer({
-  //       open: true,
-  //       gzipSize: true,
-  //       brotliSize: true,
-  //     }),
-  //   ];
-  // }
+
+  if (process.env.VISUALIZER) {
+    const { plugins = [] } = rollupOptions;
+    rollupOptions.plugins = [
+      ...plugins,
+      visualizer({
+        open: true,
+        gzipSize: true,
+        brotliSize: true,
+      }),
+    ];
+  }
 
   // 在这里无法使用 import.meta.env 变量
   if (command === "serve") {
-    // config.server = {
-    //   host: "0.0.0.0",
-    //   // 反向代理
-    //   proxy: {
-    //     api: {
-    //       target: process.env.VITE_API_HOST,
-    //       changeOrigin: true,
-    //       rewrite: (path: unknown) => path.replace(/^\/api/, ""),
-    //     },
-    //   },
-    // };
+    config.server = {
+      ...config.server,
+      host: "0.0.0.0",
+      // 反向代理
+      proxy: {
+        api: {
+          target: process.env.VITE_API_HOST,
+          changeOrigin: true,
+          rewrite: (path: unknown) => path.replace(/^\/api/, ""),
+        },
+      },
+    };
   }
-  console.log(config.server);
   return config;
 };

@@ -1,9 +1,9 @@
 import { RouterProvider } from "react-router";
 import router from "@/routes";
-import { Empty } from "antd";
+import { Spin } from "antd";
 
 function App() {
-  return <RouterProvider router={router} fallbackElement={<Empty />} />;
+  return <RouterProvider router={router} fallbackElement={<Spin />} />;
 }
 
 export default App;
